@@ -356,7 +356,7 @@ function renderTodos(){$('todoList').innerHTML=TODOS.map(([group,title],i)=>`<la
 function updateTodoProgress(){$('todoProgress').textContent=`共 ${TODOS.length} 项`;}
 const clockFormats={};['Asia/Shanghai','Africa/Cairo'].forEach(z=>clockFormats[z]={time:new Intl.DateTimeFormat('zh-CN',{timeZone:z,hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}),date:new Intl.DateTimeFormat('zh-CN',{timeZone:z,month:'long',day:'numeric',weekday:'short'}),offset:new Intl.DateTimeFormat('en',{timeZone:z,timeZoneName:'shortOffset'})});
 const departure=new Date('2026-09-24T01:45:00+08:00').getTime(),returnTime=new Date('2026-10-04T05:50:00+08:00').getTime();
-function clockOffset(zone,now){const name=clockFormats[z].offset.formatToParts(now).find(x=>x.type==='timeZoneName').value;const m=name.match(/GMT([+-])(\d+)(?::(\d+))?/);return m?(m[1]==='-'?-1:1)*(+m[2]+ +(m[3]||0)/60):0;}
+function clockOffset(z,now){const name=clockFormats[z].offset.formatToParts(now).find(x=>x.type==='timeZoneName').value;const m=name.match(/GMT([+-])(\d+)(?::(\d+))?/);return m?(m[1]==='-'?-1:1)*(+m[2]+(+(m[3]||0))/60):0;}
 function updateClocks(){
   const now=new Date();
   [['Asia/Shanghai','china'],['Africa/Cairo','egypt']].forEach(([z,id])=>{
