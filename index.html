@@ -45,7 +45,34 @@
 <nav class="section-nav" aria-label="手册导航"><a href="#overview" class="active">旅程概览</a><a href="#itinerary">逐日行程</a><a href="#transport">交通票据</a><a href="#stays">住宿安排</a><a href="#prepare">行前准备</a></nav>
 <section id="overview" class="section">
 <div class="section-title"><div><p class="eyebrow">把期待装进行李</p><h2>旅程，正在靠近</h2></div><span class="soft-label">中国比埃及快 <b id="difference">5</b> 小时<span id="differenceSuffix"></span></span></div>
-<div class="time-panel"><div class="count-block"><p id="countCaption">距离去程航班起飞</p><div class="countdown" aria-label="距离出发时间"><div><b id="cdDays">--</b><span>天</span></div><em>:</em><div><b id="cdHours">--</b><span>时</span></div><em>:</em><div><b id="cdMinutes">--</b><span>分</span></div><em>:</em><div><b id="cdSeconds">--</b><span>秒</span></div></div><small>9 月 24 日 01:45 · 中国时间 · 已出票</small></div><div class="world-clocks"><div><span>中国 · 上海 <small id="chinaOffset">UTC+8</small></span><b id="chinaClock">--:--:--</b><small id="chinaDate"></small></div><div><span>埃及 · 开罗 <small id="egyptOffset">UTC+3</small></span><b id="egyptClock">--:--:--</b><small id="egyptDate"></small></div></div></div>
+<div class="time-panel">
+  <div class="count-block">
+    <p id="countCaption">距离去程航班起飞</p>
+    <div class="countdown" aria-label="距离出发时间">
+      <div><b id="cdDays">--</b><span>天</span></div>
+      <em>:</em>
+      <div><b id="cdHours">--</b><span>时</span></div>
+      <em>:</em>
+      <div><b id="cdMinutes">--</b><span>分</span></div>
+      <em>:</em>
+      <div><b id="cdSeconds">--</b><span>秒</span></div>
+    </div>
+    <small>9 月 24 日 01:45 · 中国时间 · 已出票</small>
+  </div>
+  <div class="world-clocks">
+    <div>
+      <span>中国 · 上海 <small id="chinaOffset">UTC+8</small></span>
+      <b id="chinaClock">--:--:--</b>
+      <small id="chinaDate"></small>
+    </div>
+    <div>
+      <span>埃及 · 开罗 <small id="egyptOffset">UTC+3</small></span>
+      <b id="egyptClock">--:--:--</b>
+      <small id="egyptDate"></small>
+    </div>
+  </div>
+</div>
+
 <aside class="departure-note"><span class="note-icon" aria-hidden="true">!</span><div><strong>别晚一天到机场：集合是 9 月 23 日晚上</strong><p>MU223 为 9 月 24 日凌晨航班，21:30 在浦东 T1 集合。杭州至上海的接驳也要安排在前一天。</p></div><a href="#prepare">加入核对 →</a></aside>
 <div class="section-title map-heading"><div><p class="eyebrow">沿着河流，走向海</p><h2>十一天的足迹</h2></div><span class="subtle">点击地点，读一段故事</span></div>
 <div class="map-card"><div class="map-toolbar"><div><b id="mapTitle">埃及 · 旅程总览</b><span id="mapSubtitle">上海 → 开罗 → 阿斯旺 → 卢克索 → 红海 → 开罗 ⇄ 亚历山大 → 上海</span></div><button class="outline-btn" id="allPlaces" aria-pressed="false">显示全部地点</button></div>
@@ -330,7 +357,37 @@ function updateTodoProgress(){$('todoProgress').textContent=`共 ${TODOS.length}
 const clockFormats={};['Asia/Shanghai','Africa/Cairo'].forEach(z=>clockFormats[z]={time:new Intl.DateTimeFormat('zh-CN',{timeZone:z,hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}),date:new Intl.DateTimeFormat('zh-CN',{timeZone:z,month:'long',day:'numeric',weekday:'short'}),offset:new Intl.DateTimeFormat('en',{timeZone:z,timeZoneName:'shortOffset'})});
 const departure=new Date('2026-09-24T01:45:00+08:00').getTime(),returnTime=new Date('2026-10-04T05:50:00+08:00').getTime();
 function clockOffset(zone,now){const name=clockFormats[z].offset.formatToParts(now).find(x=>x.type==='timeZoneName').value;const m=name.match(/GMT([+-])(\d+)(?::(\d+))?/);return m?(m[1]==='-'?-1:1)*(+m[2]+ +(m[3]||0)/60):0;}
-function updateClocks(){const now=new Date();[['Asia/Shanghai','china'],['Africa/Cairo','egypt']].forEach(([z,id])=>{$(id+'Clock').textContent=clockFormats[z].time.format(now);$(id+'Date').textContent=clockFormats[z].date.format(now);const offset=clockOffset(z,now);$(id+'Offset').textContent=`UTC${offset>=0?'+':''}${offset}`;});const diff=clockOffset('Asia/Shanghai',now)-clockOffset('Africa/Cairo',now);$('difference').textContent=diff;$('differenceSuffix').textContent='（当前）';let seconds=Math.max(0,Math.floor((departure-now.getTime())/1000));const parts=[Math.floor(seconds/86400),Math.floor(seconds%86400/3600),Math.floor(seconds%3600/60),seconds%60];['Days','Hours','Minutes','Seconds'].forEach((k,i)=>$('cd'+k).textContent=String(parts[i]).padStart(2,'0'));$('countCaption').textContent=now.getTime()<departure?'距离去程航班起飞':now.getTime()<returnTime?'旅程进行中 · 记得收藏每一天':'这段旅程已结束 · 美好仍在继续';}
+function updateClocks(){
+  const now=new Date();
+  [['Asia/Shanghai','china'],['Africa/Cairo','egypt']].forEach(([z,id])=>{
+    $(id+'Clock').textContent=clockFormats[z].time.format(now);
+    $(id+'Date').textContent=clockFormats[z].date.format(now);
+  });
+  const chinaOffset=clockOffset('Asia/Shanghai',now);
+  const egyptOffset=clockOffset('Africa/Cairo',now);
+  $('chinaOffset').textContent='UTC'+(chinaOffset>=0?'+':'')+chinaOffset;
+  $('egyptOffset').textContent='UTC'+(egyptOffset>=0?'+':'')+egyptOffset;
+  const diff=chinaOffset-egyptOffset;
+  $('difference').textContent=diff;
+  $('differenceSuffix').textContent='（当前）';
+  let seconds=Math.max(0,Math.floor((departure-now.getTime())/1000));
+  const parts=[
+    Math.floor(seconds/86400),
+    Math.floor(seconds%86400/3600),
+    Math.floor(seconds%3600/60),
+    seconds%60
+  ];
+  ['Days','Hours','Minutes','Seconds'].forEach((k,i)=>{
+    $('cd'+k).textContent=String(parts[i]).padStart(2,'0');
+  });
+  $('countCaption').textContent=
+    now.getTime()<departure
+      ?'距离去程航班起飞'
+      :now.getTime()<returnTime
+        ?'旅程进行中 · 记得收藏每一天'
+        :'这段旅程已结束 · 美好仍在继续';
+}
+
 renderDays();renderMap();renderTickets();renderStays();renderTodos();$('personalNotes').value=state.fields.notes||'';updateClocks();setInterval(updateClocks,1000);
 try{const probe=storageKey+'-test';localStorage.setItem(probe,'1');localStorage.removeItem(probe);}catch{storageAvailable=false;$('saveStatus').textContent='当前环境无法长期保存，请下载含记录的手册副本';}
 document.addEventListener('click',event=>{
@@ -359,3 +416,4 @@ let wasMobile=matchMedia('(max-width:600px)').matches;window.addEventListener('r
 })();
 </script>
 </body></html>
+
